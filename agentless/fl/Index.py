@@ -14,7 +14,7 @@ from llama_index.core import (
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.schema import MetadataMode
-from llama_index.embeddings.openai import AzureOpenAIEmbedding
+from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 
 from agentless.util.api_requests import num_tokens_from_messages
 from agentless.util.index_skeleton import parse_global_stmt_from_code
