@@ -76,7 +76,7 @@ class LocalizationArgs:
         default=False, metadata={"help": "Mock run to compute prompt tokens."}
     )
     model: str = field(
-        default="gpt-4o-2024-05-13",
+        default="model",
         metadata={
             "help": "Model to use.",
             "choices": [
@@ -84,14 +84,15 @@ class LocalizationArgs:
                 "deepseek-coder",
                 "gpt-4o-mini-2024-07-18",
                 "claude-3-5-sonnet-20241022",
+                "model",
             ],
         },
     )
     backend: str = field(
-        default="openai",
+        default="nemo",
         metadata={
             "help": "Backend service.",
-            "choices": ["openai", "deepseek", "anthropic"],
+            "choices": ["openai", "deepseek", "anthropic", "nemo"],
         },
     )
     dataset: str = field(
@@ -110,13 +111,14 @@ class LocalizationArgs:
             "deepseek-coder",
             "gpt-4o-mini-2024-07-18",
             "claude-3-5-sonnet-20241022",
+            "model",
         ]
         if self.model not in model_choices:
             raise ValueError(
                 f"Invalid model '{self.model}'. Choices are: {model_choices}"
             )
 
-        backend_choices = ["openai", "deepseek", "anthropic"]
+        backend_choices = ["openai", "deepseek", "anthropic", "nemo"]
         if self.backend not in backend_choices:
             raise ValueError(
                 f"Invalid backend '{self.backend}'. Choices are: {backend_choices}"
@@ -249,22 +251,23 @@ class RepairArgs:
         metadata={"help": "Index of the selected samples during post-processing."}
     )
     model: str = field(
-        default="gpt-4o-2024-05-13",
+        default="model",
         metadata={
-            "help": "The model to use for generation.",
+            "help": "Model to use.",
             "choices": [
                 "gpt-4o-2024-05-13",
                 "deepseek-coder",
                 "gpt-4o-mini-2024-07-18",
                 "claude-3-5-sonnet-20241022",
+                "model",
             ],
         },
     )
     backend: str = field(
-        default="openai",
+        default="nemo",
         metadata={
-            "help": "The API backend to use.",
-            "choices": ["openai", "deepseek", "anthropic"],
+            "help": "Backend service.",
+            "choices": ["openai", "deepseek", "anthropic", "nemo"],
         },
     )
     num_threads: int = field(
@@ -411,12 +414,13 @@ class SelectRegressionTestsArgs:
         "deepseek-coder",
         "gpt-4o-mini-2024-07-18",
         "claude-3-5-sonnet-20241022",
+        "model",
     ] = field(
-        default="gpt-4o-2024-05-13",
+        default="model",
         metadata={"help": "The model to use for the run."}
     )
-    backend: Literal["openai", "deepseek", "anthropic"] = field(
-        default="openai",
+    backend: Literal["openai", "deepseek", "anthropic", "nemo"] = field(
+        default="nemo",
         metadata={"help": "The backend service to use."}
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
@@ -469,12 +473,13 @@ class GenerateTestArgs:
         "deepseek-coder",
         "gpt-4o-mini-2024-07-18",
         "claude-3-5-sonnet-20241022",
+        "model",
     ] = field(
-        default="gpt-4o-2024-05-13",
+        default="model",
         metadata={"help": "The model to use for generation."}
     )
-    backend: Literal["openai", "deepseek", "anthropic"] = field(
-        default="openai",
+    backend: Literal["openai", "deepseek", "anthropic", "nemo"] = field(
+        default="nemo",
         metadata={"help": "The backend service to use."}
     )
     num_threads: int = field(

@@ -14,7 +14,7 @@ from llama_index.core import (
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.schema import MetadataMode
-from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.embeddings.openai import AzureOpenAIEmbedding
 
 from agentless.util.api_requests import num_tokens_from_messages
 from agentless.util.index_skeleton import parse_global_stmt_from_code
@@ -257,7 +257,7 @@ class EmbeddingIndex(ABC):
                 )  # embedding dimension does not matter for mocking.
                 Settings.callback_manager = CallbackManager([token_counter])
             else:
-                embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
+                embed_model = AzureOpenAIEmbedding(model_name="text-embedding-3-small")
             index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
             index.storage_context.persist(persist_dir=persist_dir)
         else:

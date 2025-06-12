@@ -1,6 +1,9 @@
 import json
+import os
 from abc import ABC, abstractmethod
 from typing import List
+
+import openai
 
 from agentless.util.api_requests import (
     create_anthropic_config,
@@ -100,6 +103,25 @@ class OpenAIChatDecoder(DecoderBase):
 
     def is_direct_completion(self) -> bool:
         return False
+
+
+class NeMoSkillsChatDecoder(OpenAIChatDecoder):
+    def __init__(self, name: str, logger, host: str = '127.0.0.1', port: str = '5000', **kwargs) -> None:
+        if name == 'model':
+            name = self.get_model_name_from_server()
+        self.base_url = f"http://{host}:{port}/v1"
+        os.environ['OPENAI_BASE_URL'] = self.base_url
+        super().__init__(name, logger, **kwargs)
+
+    def get_model_name_from_server(self):
+        client = openai.OpenAI(
+            api_key="EMPTY",
+            base_url=self.base_url,
+            timeout=None,
+        )
+        model_list = client.models.list()
+        model_name = model_list.data[0].id
+        return model_name
 
 
 class AnthropicChatDecoder(DecoderBase):
@@ -410,6 +432,14 @@ def make_model(
         )
     elif backend == "deepseek":
         return DeepSeekChatDecoder(
+            name=model,
+            logger=logger,
+            batch_size=batch_size,
+            max_new_tokens=max_tokens,
+            temperature=temperature,
+        )
+    elif backend == "nemo":
+        return NeMoSkillsChatDecoder(
             name=model,
             logger=logger,
             batch_size=batch_size,
