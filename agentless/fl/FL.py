@@ -11,7 +11,7 @@ from agentless.util.preprocess_data import (
     show_project_structure,
 )
 
-MAX_CONTEXT_LENGTH = 128000
+MAX_CONTEXT_LENGTH = 32000
 
 
 class FL(ABC):
@@ -100,24 +100,25 @@ The locations can be specified as class names, function or method names, or exac
 Please provide the class name, function or method name, or the exact line numbers that need to be edited.
 The possible location outputs should be either "class", "function" or "line".
 
-### Examples:
+### Example output format:
 ```
-full_path1/file1.py
-line: 10
+/path/to/folder/file1.py
+function: my_function_1
 class: MyClass1
-line: 51
-
-full_path2/file2.py
 function: MyClass2.my_method
-line: 12
 
-full_path3/file3.py
-function: my_function
-line: 24
-line: 156
+/path/to/folder/file2.py
+variable: my_var
+function: MyClass3.my_method
+
+/path/to/folder/file3.py
+function: my_function_2
+function: my_function_3
+function: MyClass4.my_method_1
+class: MyClass5
 ```
 
-Return just the location(s) wrapped with ```.
+Make sure to use the real path of the file rather than the example, which is provided in the ### before the code lines begin for each file. Return just the locations wrapped with ```.
 """
 
     obtain_relevant_code_combine_top_n_no_line_number_prompt = """
@@ -133,21 +134,25 @@ The locations can be specified as class, method, or function names that require 
 ###
 
 Please provide the class, method, or function names that need to be edited.
-### Examples:
+### Example output format:
 ```
-full_path1/file1.py
-function: my_function1
+/path/to/folder/file1.py
+function: my_function_1
 class: MyClass1
-
-full_path2/file2.py
 function: MyClass2.my_method
-class: MyClass3
 
-full_path3/file3.py
-function: my_function2
+/path/to/folder/file2.py
+variable: my_var
+function: MyClass3.my_method
+
+/path/to/folder/file3.py
+function: my_function_2
+function: my_function_3
+function: MyClass4.my_method_1
+class: MyClass5
 ```
 
-Return just the location(s) wrapped with ```.
+Make sure to use the real path of the file rather than the example, which is provided in the ### before the code lines begin for each file. Return just the locations wrapped with ```.
 """
     obtain_relevant_functions_and_vars_from_compressed_files_prompt_more = """
 Please look through the following GitHub Problem Description and the Skeleton of Relevant Files.
@@ -165,25 +170,25 @@ For each location you provide, either give the name of the class, the name of a 
 Please provide the complete set of locations as either a class name, a function name, or a variable name.
 Note that if you include a class, you do not need to list its specific methods.
 You can include either the entire class or don't include the class name and instead include specific methods in the class.
-### Examples:
+### Example output format:
 ```
-full_path1/file1.py
+/path/to/folder/file1.py
 function: my_function_1
 class: MyClass1
 function: MyClass2.my_method
 
-full_path2/file2.py
+/path/to/folder/file2.py
 variable: my_var
 function: MyClass3.my_method
 
-full_path3/file3.py
+/path/to/folder/file3.py
 function: my_function_2
 function: my_function_3
 function: MyClass4.my_method_1
 class: MyClass5
 ```
 
-Return just the locations wrapped with ```.
+Make sure to use the real path of the file rather than the example, which is provided in the ### before the code lines begin for each file. Return just the locations wrapped with ```.
 """
 
     obtain_relevant_functions_and_vars_from_raw_files_prompt = """
@@ -202,25 +207,25 @@ For each location you provide, either give the name of the class, the name of a 
 Please provide the complete set of locations as either a class name, a function name, or a variable name.
 Note that if you include a class, you do not need to list its specific methods.
 You can include either the entire class or don't include the class name and instead include specific methods in the class.
-### Examples:
+### Example output format:
 ```
-full_path1/file1.py
+/path/to/folder/file1.py
 function: my_function_1
 class: MyClass1
 function: MyClass2.my_method
 
-full_path2/file2.py
+/path/to/folder/file2.py
 variable: my_var
 function: MyClass3.my_method
 
-full_path3/file3.py
+/path/to/folder/file3.py
 function: my_function_2
 function: my_function_3
 function: MyClass4.my_method_1
 class: MyClass5
 ```
 
-Return just the locations wrapped with ```.
+Make sure to use the real path of the file rather than the example, which is provided in the ### before the code lines begin for each file. Return just the locations wrapped with ```.
 """
 
     def __init__(

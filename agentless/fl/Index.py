@@ -251,13 +251,18 @@ class EmbeddingIndex(ABC):
             self.logger.info(f"Total number of documents: {len(documents)}")
             print(f"Total number of documents: {len(documents)}")
 
+            Settings.chunk_size = 1024
             if mock:
                 embed_model = MockEmbedding(
                     embed_dim=1024
                 )  # embedding dimension does not matter for mocking.
                 Settings.callback_manager = CallbackManager([token_counter])
             else:
-                embed_model = AzureOpenAIEmbedding(model_name="text-embedding-3-small")
+                embed_model = AzureOpenAIEmbedding(
+                    model_name="text-embedding-3-small",
+                    api_key=os.environ['AZURE_OPENAI_API_KEY'],
+                    api_version=os.environ['AZURE_OPENAI_API_VERSION']
+                )
             index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
             index.storage_context.persist(persist_dir=persist_dir)
         else:

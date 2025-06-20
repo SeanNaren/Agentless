@@ -106,12 +106,14 @@ class OpenAIChatDecoder(DecoderBase):
 
 
 class NeMoSkillsChatDecoder(OpenAIChatDecoder):
-    def __init__(self, name: str, logger, host: str = '127.0.0.1', port: str = '5000', **kwargs) -> None:
-        if name == 'model':
-            name = self.get_model_name_from_server()
+    def __init__(self, name: str, logger, host: str = '127.0.0.1', port: str = '5000', max_new_tokens: int = 16384, temperature: float =0.6, **kwargs) -> None:
         self.base_url = f"http://{host}:{port}/v1"
         os.environ['OPENAI_BASE_URL'] = self.base_url
-        super().__init__(name, logger, **kwargs)
+        if name == 'model':
+            name = self.get_model_name_from_server()
+        max_new_tokens = 16384
+        temperature = 0.7
+        super().__init__(name, logger, max_new_tokens=max_new_tokens, temperature=temperature, **kwargs)
 
     def get_model_name_from_server(self):
         client = openai.OpenAI(

@@ -31,11 +31,13 @@ def rewrite_report(instance_id, input_folder_path, regression_tests):
     return report["PASS_TO_PASS"]["failure"]
 
 
-def save_passing_tests(output_jsonl_path, input_folder_path, dataset):
-    ds = load_dataset(dataset)
+def save_passing_tests(instance_ids, output_jsonl_path, input_folder_path, dataset):
+    ds = load_dataset(dataset, split="test")
+    if instance_ids is not None:
+        ds = [x for x in ds if x['instance_id'] in instance_ids]
 
     with jsonlines.open(output_jsonl_path, mode="w") as writer:
-        for entry in ds["test"]:
+        for entry in ds:
             instance_id = entry["instance_id"]
 
             log_path = f"{input_folder_path}/test/{instance_id}/test_output.txt"
@@ -206,6 +208,7 @@ def _run_regression(args):
         else:
             # save the list of passing tests
             save_passing_tests(
+                args.instance_ids,
                 args.output_file,
                 os.path.join("logs", "run_evaluation", args.run_id),
                 args.dataset,

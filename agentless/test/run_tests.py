@@ -5,9 +5,8 @@ import re
 import resource
 import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any
+from typing import Any, Optional
 
-import docker
 from swebench.harness.constants import (
     FAIL_TO_PASS,
     KEY_INSTANCE_ID,
@@ -16,10 +15,11 @@ from swebench.harness.constants import (
     USE_X86,
     SWEbenchInstance,
 )
-from swebench.harness.docker_build import build_env_images
-from swebench.harness.run_evaluation import get_dataset_from_preds, run_instance
+from swebench.harness.run_evaluation import get_dataset_from_preds
+from agentless.util.run_instance import run_instance
+from swebench.harness.test_spec import TestSpec
+
 from swebench.harness.test_spec import (
-    TestSpec,
     make_env_script_list,
     make_repo_script_list,
 )
@@ -250,7 +250,7 @@ def make_regression_spec(instance: SWEbenchInstance) -> TestSpec:
         eval_script_list=eval_script_list,
         version=version,
         arch=arch,
-        FAIL_TO_PASS=fail_to_pass,  # Remove the fail to pass cases
+        FAIL_TO_PASS=fail_to_pass,
         PASS_TO_PASS=pass_to_pass,
     )
 
@@ -352,8 +352,6 @@ def run_reproduction_tests(
     print(f"Using run_id: {run_id}")
 
     split = "test"
-    client = docker.from_env()
-    force_rebuild = False
 
     predictions = {}
 
@@ -380,11 +378,6 @@ def run_reproduction_tests(
         dataset_name, split, instance_ids, predictions, run_id
     )
 
-    if not instances:
-        print("No instances to run.")
-    else:
-        build_env_images(client, instances, force_rebuild, max_workers)
-
     no_f2p_instances = []
 
     for instance in instances:
@@ -402,15 +395,6 @@ def run_reproduction_tests(
     test_specs = list(map(make_reproduction_sec, no_f2p_instances))
 
     test_specs = rearrange_patches(test_specs)
-
-    instance_image_ids = {x.instance_image_key for x in test_specs}
-    existing_images = {
-        tag
-        for i in client.images.list(all=True)
-        for tag in i.tags
-        if tag in instance_image_ids
-    }
-    print(f"Found {len(existing_images)} existing instance images. Will reuse them.")
 
     # Load in previously evaluated results
     resolved_dict = extract_resolved_info(
@@ -445,9 +429,6 @@ def run_reproduction_tests(
                     run_instance,
                     test_spec,
                     predictions[test_spec.instance_id],
-                    False,  # do not remove them.
-                    force_rebuild,
-                    client,
                     run_id,
                     timeout,
                 ): None
@@ -506,8 +487,6 @@ def run_tests(
     print(f"Using run_id: {run_id}")
 
     split = "test"
-    client = docker.from_env()
-    force_rebuild = False
 
     predictions = {}
 
@@ -527,10 +506,6 @@ def run_tests(
     )
 
     print(f"Running {len(instances)} unevaluated instances...")
-    if not instances:
-        print("No instances to run.")
-    else:
-        build_env_images(client, instances, force_rebuild, max_workers)
 
     instance_test_dict = {}
 
@@ -562,15 +537,6 @@ def run_tests(
 
     test_specs = rearrange_patches(test_specs)
 
-    instance_image_ids = {x.instance_image_key for x in test_specs}
-    existing_images = {
-        tag
-        for i in client.images.list(all=True)
-        for tag in i.tags
-        if tag in instance_image_ids
-    }
-    print(f"Found {len(existing_images)} existing instance images. Will reuse them.")
-
     # Load in previously evaluated results
     resolved_dict = extract_resolved_info(
         os.path.join("logs", "run_evaluation", run_id, "test")
@@ -593,16 +559,13 @@ def run_tests(
             resolved_dict[instance_ids[index]] = False
 
     with tqdm(total=len(ids), smoothing=0, colour="MAGENTA") as pbar:
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             # Create a future for running each instance
             futures = {
                 executor.submit(
                     run_instance,
                     test_spec,
                     predictions[test_spec.instance_id],
-                    False,  # do not remove them.
-                    force_rebuild,
-                    client,
                     run_id,
                     timeout,
                 ): None

@@ -645,11 +645,10 @@ def get_full_file_paths_and_classes_and_functions(structure, current_path=""):
     return files, classes, functions
 
 
-PROJECT_FILE_LOC = os.environ.get("PROJECT_FILE_LOC", None)
-
 
 def get_repo_structure(instance_id: str, repo_name, base_commit, playground):
 
+    PROJECT_FILE_LOC = os.environ.get("PROJECT_FILE_LOC", None)
     if PROJECT_FILE_LOC is not None:
         with open(PROJECT_FILE_LOC + "/" + instance_id + ".json") as f:
             d = json.load(f)
