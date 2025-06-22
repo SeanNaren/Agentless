@@ -96,7 +96,7 @@ class LocalizationArgs:
         },
     )
     dataset: str = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={
             "help": "Current supported dataset for evaluation.",
             "choices": ["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"],
@@ -171,7 +171,7 @@ class RetrievalArgs:
             "help": "Number of threads for API requests (embedding token counts are only accurate when thread=1)."},
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={"help": "The dataset to use for retrieval."},
     )
 
@@ -275,7 +275,7 @@ class RepairArgs:
         metadata={"help": "Number of threads for creating API requests."}
     )
     dataset: str = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={
             "help": "The dataset to use.",
             "choices": ["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"],
@@ -381,7 +381,7 @@ class RegressionTestsArgs:
         metadata={"help": "Timeout for running tests in seconds."}
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={"help": "The dataset to use."}
     )
 
@@ -424,7 +424,7 @@ class SelectRegressionTestsArgs:
         metadata={"help": "The backend service to use."}
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={"help": "The dataset to use."}
     )
 
@@ -487,7 +487,7 @@ class GenerateTestArgs:
         metadata={"help": "Number of threads for creating API requests."}
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={"help": "The dataset to use."}
     )
 
@@ -532,7 +532,7 @@ class RunReproductionTestsArgs:
         metadata={"help": "Timeout for running tests in seconds."}
     )
     dataset: Literal["princeton-nlp/SWE-bench_Lite", "princeton-nlp/SWE-bench_Verified"] = field(
-        default="princeton-nlp/SWE-bench_Lite",
+        default="princeton-nlp/SWE-bench_Verified",
         metadata={"help": "The dataset to use for the tests."}
     )
 

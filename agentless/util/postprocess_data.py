@@ -123,7 +123,12 @@ def fake_git_repo(repo_playground, file_pathes, old_contents, new_contents) -> s
     os.makedirs(repo_playground)
 
     # create a fake git repo
-    subprocess.run(f"cd {repo_playground} && git init", shell=True)
+    command = (
+        f"cd {repo_playground} && git init && "
+        "git config user.name 'Fake User' && "
+        "git config user.email 'fake@example.com'"
+    )
+    subprocess.run(command, shell=True, check=True)
 
     for file_path, old_content, new_content in zip(
         file_pathes, old_contents, new_contents

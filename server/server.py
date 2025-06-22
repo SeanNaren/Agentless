@@ -218,4 +218,5 @@ def execute_script():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6005, debug=True)
+    port = int(os.getenv('LISTEN_PORT', 6005))
+    app.run(host="0.0.0.0", port=port, debug=True)
