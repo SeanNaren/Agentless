@@ -162,19 +162,19 @@ cython_debug/
 
 # some project specific stuff
 
-/get_repo_structure/astropy
-/get_repo_structure/django
-/get_repo_structure/flask
-/get_repo_structure/pylint
-/get_repo_structure/pytest
-/get_repo_structure/requests
-/get_repo_structure/seaborn
-/get_repo_structure/scikit-learn
-/get_repo_structure/sphinx
-/get_repo_structure/matplotlib
-/get_repo_structure/sympy
-/get_repo_structure/xarray
-get_repo_structure/test_repo/
+/agentless/util/get_repo_structure/astropy
+/agentless/util/get_repo_structure/django
+/agentless/util/get_repo_structure/flask
+/agentless/util/get_repo_structure/pylint
+/agentless/util/get_repo_structure/pytest
+/agentless/util/get_repo_structure/requests
+/agentless/util/get_repo_structure/seaborn
+/agentless/util/get_repo_structure/scikit-learn
+/agentless/util/get_repo_structure/sphinx
+/agentless/util/get_repo_structure/matplotlib
+/agentless/util/get_repo_structure/sympy
+/agentless/util/get_repo_structure/xarray
+agentless/util/get_repo_structure/test_repo/
 results/
 logs/
 dev/

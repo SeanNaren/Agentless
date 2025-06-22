@@ -22,7 +22,7 @@ from agentless.util.preprocess_data import (
     clean_method_left_space,
     get_full_file_paths_and_classes_and_functions,
 )
-from get_repo_structure.get_repo_structure import parse_python_file
+from agentless.util.get_repo_structure.get_repo_structure import parse_python_file
 
 
 def construct_file_meta_data(file_name: str, clazzes: list, functions: list) -> dict:
