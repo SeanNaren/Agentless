@@ -1,8 +1,8 @@
 import json
 import os
-
+import pickle
 from agentless.util.parse_global_var import parse_global_var_from_code
-from agentless.util.get_repo_structure.get_repo_structure import (
+from agentless.util.get_repo_structure import (
     get_project_structure_from_scratch,
     parse_python_file,
 )
@@ -600,9 +600,9 @@ def get_full_file_paths_and_classes_and_functions(structure, current_path=""):
     for name, content in structure.items():
         if isinstance(content, dict):
             if (
-                not "functions" in content.keys()
-                and not "classes" in content.keys()
-                and not "text" in content.keys()
+                    not "functions" in content.keys()
+                    and not "classes" in content.keys()
+                    and not "text" in content.keys()
             ) or not len(content.keys()) == 3:
                 # or guards against case where functions and classes are somehow part of the structure.
                 next_path = f"{current_path}/{name}" if current_path else name
@@ -646,16 +646,32 @@ def get_full_file_paths_and_classes_and_functions(structure, current_path=""):
 
 
 
-def get_repo_structure(instance_id: str, repo_name, base_commit, playground):
-
+def get_repo_structure(
+        instance_id: str, repo_name, base_commit, playground,
+        repository_structure_loc=None
+):
     PROJECT_FILE_LOC = os.environ.get("PROJECT_FILE_LOC", None)
     if PROJECT_FILE_LOC is not None:
-        with open(PROJECT_FILE_LOC + "/" + instance_id + ".json") as f:
-            d = json.load(f)
+        json_file_path = PROJECT_FILE_LOC + "/" + instance_id + ".json"
+        pickle_file_path = PROJECT_FILE_LOC + "/" + instance_id + ".pkl"
+        assert os.path.exists(json_file_path) or os.path.exists(pickle_file_path)
+        if os.path.exists(json_file_path):
+            with open(json_file_path) as f:
+                d = json.load(f)
+        else:
+            with open(pickle_file_path, 'rb') as f:
+                d = pickle.load(f)
+        repo_structure = d["structure"]
+    elif repository_structure_loc is not None:
+        pickle_file_path = repository_structure_loc + "/" + instance_id + ".pkl"
+        assert os.path.exists(pickle_file_path)
+        with open(pickle_file_path, 'rb') as f:
+            d = pickle.load(f)
         repo_structure = d["structure"]
     else:
+        repo_top_folder = repo_name.split("/")[-1]
         d = get_project_structure_from_scratch(
-            repo_name, base_commit, instance_id, playground
+            repo_name, repo_top_folder, base_commit, instance_id, playground
         )
         repo_structure = d["structure"]
 
@@ -667,14 +683,12 @@ def get_repo_files(structure, filepaths: list[str]):
     file_contents = dict()
     for filepath in filepaths:
         content = None
-
         for file_content in files:
             if file_content[0] == filepath:
                 content = "\n".join(file_content[1])
                 file_contents[filepath] = content
                 break
-
-        assert content is not None, "file not found"
+        assert content is not None, f"{filepath} file not found"
     return file_contents
 
 

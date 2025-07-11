@@ -171,6 +171,9 @@ def make_reproduction_script_list(
     # Reset test files to the state they should be in before the patch.
     reset_tests_command = f"git checkout {base_commit}"
 
+    # Command to forcefully remove specific files to prevent conflicts
+    remove_potential_conflict_files_command = "rm -f reproduce_bug.py this_is_invisible.py this_is_invisible_2.py"
+
     HEREDOC_DELIMITER = "EOF_114329324912"
     fake_apply_test_patch_command = (
         f"git apply -v - <<'{HEREDOC_DELIMITER}'\n{NOOP_PATCH_2}\n{HEREDOC_DELIMITER}"
@@ -200,6 +203,8 @@ def make_reproduction_script_list(
         eval_commands.append(specs["install"])
     eval_commands += [
         reset_tests_command,
+        # Force remove the files after checkout to ensure a clean state
+        remove_potential_conflict_files_command,
         fake_apply_test_patch_command,  # If we don't apply some sort of patch the harness won't return the tests which passed
         apply_reproduce_test_command,
         reproduce_test_command,

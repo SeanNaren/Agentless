@@ -74,6 +74,10 @@ class SkillsExecutionClient:
         response_dict = self._make_request("execute-command", payload)
         return response_dict['output']
 
+    def clean_environment(self, workdir):
+        remove_agentless_intermediate_files = f"rm -f {workdir}/reproduce_bug.py {workdir}/this_is_invisible.py {workdir}/this_is_invisible_2.py"
+        self.execute_command(workdir=workdir, command=remove_agentless_intermediate_files)
+
     def revert_patch(self, workdir, patch_content):
         """
         Sends a request to the /revert-patch endpoint.
@@ -138,6 +142,7 @@ def run_instance(test_spec: TestSpec,
     report_path = log_dir / LOG_REPORT
 
     client = SkillsExecutionClient()
+    client.clean_environment(workdir=DOCKER_WORKDIR)
 
     client.apply_patch(
         patch_content=pred[KEY_PREDICTION],
@@ -180,6 +185,11 @@ def run_instance(test_spec: TestSpec,
     print(f"Git diff after:\n{git_diff_output_after}")
     if git_diff_output_after != git_diff_output_before:
         print("Git diff changed after running eval script")
+
+    client.revert_patch(
+        patch_content=pred[KEY_PREDICTION],
+        workdir=DOCKER_WORKDIR,
+    )
 
     print(f"Grading answer for {instance_id}...")
     report = get_eval_report(
