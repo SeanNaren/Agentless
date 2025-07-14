@@ -7,4 +7,5 @@ libcst
 llama-index
 jsonlines
 llama-index-embeddings-azure-openai
+llama-index-embeddings-nvidia
 swebench @ git+https://github.com/princeton-nlp/SWE-bench@v2.1.5

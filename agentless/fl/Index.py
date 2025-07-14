@@ -15,6 +15,7 @@ from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.schema import MetadataMode
 from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+from llama_index.embeddings.nvidia import NVIDIAEmbedding
 
 from agentless.util.api_requests import num_tokens_from_messages
 from agentless.util.index_skeleton import parse_global_stmt_from_code
@@ -258,11 +259,20 @@ class EmbeddingIndex(ABC):
                 )  # embedding dimension does not matter for mocking.
                 Settings.callback_manager = CallbackManager([token_counter])
             else:
-                embed_model = AzureOpenAIEmbedding(
-                    model_name="text-embedding-3-small",
-                    api_key=os.environ['AZURE_OPENAI_API_KEY'],
-                    api_version=os.environ['AZURE_OPENAI_API_VERSION']
-                )
+                if os.environ.get("AZURE_OPENAI_API_KEY"):
+                    embed_model = AzureOpenAIEmbedding(
+                        model_name="text-embedding-3-small",
+                        api_key=os.environ['AZURE_OPENAI_API_KEY'],
+                        api_version=os.environ['AZURE_OPENAI_API_VERSION']
+                    )
+                elif os.environ.get("NVIDIA_API_KEY"):
+                    embed_model = NVIDIAEmbedding(
+                        model="nvidia/nv-embedcode-7b-v1",
+                        base_url="https://integrate.api.nvidia.com/v1",
+                        api_key=os.environ['NVIDIA_API_KEY'],
+                    )
+                else:
+                    raise ValueError("Unable to detect which embedding model to use for retrieval.")
             index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
             index.storage_context.persist(persist_dir=persist_dir)
         else:
