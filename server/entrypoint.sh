@@ -20,8 +20,8 @@ echo "--------------------------------------------------"
 # Now we can use 'python' and 'pip' directly, as they point to the
 # executables in the activated conda environment.
 
-echo "Installing Flask..."
-pip install --quiet flask
+echo "Installing Libraries..."
+pip install --quiet flask Cython numpy
 
 echo "Starting the server..."
 python server.py
